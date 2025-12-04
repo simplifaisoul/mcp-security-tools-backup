@@ -1,0 +1,26 @@
+services:
+  mcp-security-tools:
+    build: .
+    container_name: mcp-security-tools
+    ports:
+      - "${MCP_SERVER_PORT:-8000}:8000"
+    volumes:
+      - .:/app
+    environment:
+      - MCP_SERVER_PORT=${MCP_SERVER_PORT:-8000}
+      - MAX_SCAN_TIMEOUT=${MAX_SCAN_TIMEOUT:-300}
+      - ALLOWED_IPS=${ALLOWED_IPS:-}
+      - BLOCKED_IPS=${BLOCKED_IPS:-}
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    command: tail -f /dev/null
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
